@@ -14,7 +14,11 @@ you often see in the background in sci-fi movies. It was inspired by the first s
 -->
 
 <!-- We will probably use jquery at some point, get it here: -->
-<script src="js/jquery-1.7.2.min.js"></script>
+<!-- <script src="js/jquery-1.7.2.min.js"></script> -->
+
+<script src="http://code.jquery.com/jquery-latest.min.js"></script>
+
+
 
 <!-- We will need some nice fonts scrolling too, define here -->
 <link href='http://fonts.googleapis.com/css?family=Press+Start+2P' rel='stylesheet' type='text/css'>
@@ -160,13 +164,18 @@ var killscreen = [
 
 // default to aerospace
 var selectedArray = aerospace;
-if(window.location.href.indexOf("s=aerospace")>-1) { selectedArray = aerospace; }
-if(window.location.href.indexOf("s=killscreen")>-1) { selectedArray = killscreen; }
+if(window.location.href.indexOf("s=0")>-1) { selectedArray = aerospace; }
+if(window.location.href.indexOf("s=1")>-1) { selectedArray = killscreen; }
 
 // default to no glitching
 var glitching = 0;
 if(window.location.href.indexOf("g=0")>-1) { glitching = 0; }
 if(window.location.href.indexOf("g=1")>-1) { glitching = 1; }
+
+// color
+
+// default to green monitor, if we get a t=1, switch to amber
+if(window.location.href.indexOf("t=1")>-1) { $('body').css('color','#ffaf00'); }
 
 // console.log(selectedArray);
 
@@ -209,7 +218,7 @@ function checkHeight(){
 	
 	if(displayAreaHeight > windowHeight){
 		// console.log('OK, SCROLLING.');
-		var scrollTarget = displayAreaHeight - windowHeight;
+		var scrollTarget = displayAreaHeight - windowHeight + 100;
 		// console.log('scrollTarget: '+scrollTarget);
 		window.scrollTo(0, scrollTarget);
 	}
