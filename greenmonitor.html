@@ -35,7 +35,7 @@ font-family: 'VT323', cursive;
 
 body { 
     overflow: hidden;
-    background: #111111;
+    background: #000000;
     color:#00dd00;
     text-shadow: 0px 0px 5px #008800;
 }
@@ -52,6 +52,7 @@ p {
 
 #scrollingDisplay {
     position:relative;
+	-webkit-transition: top 0.05s, left 0.05s, -webkit-transform 0.05s;
 }
 
 </style>
@@ -70,9 +71,9 @@ var alpha = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklnopqrstuvwxyz.-=*";
 var aerospace = [
     ["GENERAL ATOMICS EMBEDDED SYSTEMS", 0],
     ["SHIP LINUX VERSION 6.2.23", 0],
-    ["LEAD PROGRAMMER F.CONT589921", 0],
+    ["LEAD PROGRAMMER F.CONT19750118", 0],
     ["================================", 0],
-    ["     ", 0],
+    [".  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .", 0],
     ["Booting engine control CPU ", 1],
     ["Bringing nuclears online ", 0],
     ["Calibrating engine bank [ A ]", 1],
@@ -108,7 +109,7 @@ var aerospace = [
     ["PORT SIDE TANK 1B A.CIANCI .  .  .  .  .  .  .  .  [ NOMINAL ]", 0],
     ["STARBOARD SIDE TANK 1A B.KUCZEWSKI .  .  .  .  .  .  .  .  [ NOMINAL ]", 0],
     ["STARBOARD SIDE TANK 1A T.VLATKO .  .  .  .  .  .  .  .  [ NOMINAL ]", 0],
-    ["HYPERSLEEP DIAGNOSTIC  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .", 0],
+    ["HYPERSLEEP DIAGNOSTIC  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .", 0],
     [".  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .", 0],
     ["[ ALL NOMINAL ]", 0]
 ]
@@ -146,7 +147,15 @@ var killscreen = [
     ["=== 404 404 404 404 404 404 404 404 404 404 404 404 404 404 404 404 404 404 404 404 404 404 404 404 404 404 404 404 404 ===", 0]
 ]
 
-var selectedArray = killscreen;
+// default to aerospace
+var selectedArray = aerospace;
+if(window.location.href.indexOf("s=aerospace")>-1) { selectedArray = aerospace; }
+if(window.location.href.indexOf("s=killscreen")>-1) { selectedArray = killscreen; }
+
+// default to no glitching
+var glitching = 0;
+if(window.location.href.indexOf("g=0")>-1) { glitching = 0; }
+if(window.location.href.indexOf("g=1")>-1) { glitching = 1; }
 
 // console.log(selectedArray);
 
@@ -179,8 +188,27 @@ function resetScreen(){
     percentString = "";
 }
 
+function checkHeight(){
+	var displayAreaHeight = $("#scrollingDisplay").innerHeight();
+	var windowHeight = $(window).innerHeight();
+	
+	// console.log('Window width: '+window.innerWidth);
+	// console.log('Window height: '+window.innerHeight);
+	// console.log(displayAreaHeight+" "+windowHeight);
+	
+	if(displayAreaHeight > windowHeight){
+		// console.log('OK, SCROLLING.');
+		var scrollTarget = displayAreaHeight - windowHeight;
+		// console.log('scrollTarget: '+scrollTarget);
+		window.scrollTo(0, scrollTarget);
+	}
+}
+
 function displayChar()
 {
+
+	checkHeight();
+
     if(currentCharIndex == 0)
     {
         if(selectedArray == killscreen){ currentText += "<p>// WEBSIMIANSYSTEMS 0.9.1>   "; }
@@ -226,7 +254,6 @@ function displayChar()
                     // Add a line feed (with the end of the percent for this one)
                     currentText += "[100 %] OK. </p>";
                     // document.getElementById("scrollingDisplay").innerHTML = currentText;
-                    
                     currentCharIndex = 0;
                     currentLineIndex++;
                     // console.log(currentLine);
@@ -235,7 +262,7 @@ function displayChar()
                     percentString = "";
                     loadPercent = 0;
                 }
-            }
+			}
             else if (hasLoadTime == 0)
             {
                 // Add a line feed
@@ -260,16 +287,21 @@ function displayChar()
 
 function effectsControl(){
     
-    var shadowFlicker = Math.floor(Math.random() * 4) + 4;
-    shadowString = "0px 0px "+shadowFlicker+"px #00ff00";
+	var shadowFlicker = Math.floor(Math.random() * 4);
+    shadowString = "0px 0px "+shadowFlicker+"px 4px #00ff00";
     $('body').css('text-shadow', shadowString);
     
     var dieroll = Math.floor(Math.random() * 20);
-    
+    var randomScaleX = 1;
+	var randomScaleY = 1;;
+	var scaleString = 'scale(1, 1)';
+	var randomH_Shift = '0px';
+	var randomV_Shift = '0px';
+	
 	if(dieroll > 6 || dieroll < 15){
-		var randomScaleX = String(Math.floor(Math.random()*10));
-		var randomScaleY = String(Math.floor(Math.random()*10));
-		var scaleString = 'scale('+randomScaleX+','+randomScaleY+')';
+		randomScaleX = String(Math.floor(Math.random()*4));
+		randomScaleY = String(Math.floor(Math.random()*4));
+		scaleString = 'scale('+randomScaleX+','+randomScaleY+')';
 		$('#scrollingDisplay').css('-webkit-transform', scaleString);
 	} else {
 		$('#scrollingDisplay').css('-webkit-transform', 'scale(1,1)');
@@ -291,14 +323,14 @@ function effectsControl(){
     
     if(dieroll == 17 || dieroll == 18){
         var randomH_Shift = String(Math.floor(Math.random()*100))+'px';
-        var randomV_Shift = String(Math.floor(Math.random()*20))+'px';
+        var randomV_Shift = String(Math.floor(Math.random()*100))+'px';
         $('#scrollingDisplay').css('top', randomV_Shift);
         $('#scrollingDisplay').css('left', randomH_Shift);
         $('#scrollingDisplay').css('-webkit-filter', 'blur(2px)');
 		
-		var randomScaleX = String(Math.floor(Math.random()*10));
-		var randomScaleY = String(Math.floor(Math.random()*10));
-		var scaleString = 'scale('+randomScaleX+','+randomScaleY+')';
+		randomScaleX = String(Math.floor(Math.random()*10));
+		randomScaleY = String(Math.floor(Math.random()*10));
+		scaleString = 'scale('+randomScaleX+','+randomScaleY+')';
 		$('#scrollingDisplay').css('-webkit-transform', scaleString);
     } else {
         $('#scrollingDisplay').css('top', '0px');
@@ -316,8 +348,10 @@ function effectsControl(){
 }
 
 function startScroller(){
-    intervalController = setInterval(displayChar, 60);
-    effectsController = setInterval(effectsControl, 30);
+	intervalController = setInterval(displayChar, 60);
+    if (glitching == 1) {
+		effectsController = setInterval(effectsControl, 30);
+	}
 };
 
 startScroller();
