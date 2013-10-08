@@ -1,0 +1,327 @@
+<!doctype html>
+<html>
+<head>
+<title></title>
+<!-- We will probably use jquery at some point, get it here: -->
+<script src="js/jquery-1.7.2.min.js"></script>
+
+<!-- We will need some nice fonts scrolling too, define here -->
+<link href='http://fonts.googleapis.com/css?family=Press+Start+2P' rel='stylesheet' type='text/css'>
+<link href='http://fonts.googleapis.com/css?family=VT323' rel='stylesheet' type='text/css'>
+
+<style>
+
+/* Regular */
+/*@font-face { font-family: 'bender'; src: url('css/bender/bender.otf'); }
+@font-face { font-family: 'benderItalic'; src: url('css/bender/bender_i.otf'); }*/
+
+/* Bold */
+/* @font-face { font-family: 'benderBold'; src: url('css/bender/bender_b.otf'); } 
+@font-face { font-family: 'benderBoldItalic'; src: url('css/bender/bender_bi.otf'); }*/
+
+/* Black */
+/*@font-face { font-family: 'benderBlack'; src: url('css/bender/bender_black.otf'); }
+@font-face { font-family: 'benderBlackItalic'; src: url('css/bender/bender_black_i.otf'); }*/
+
+/* Light */
+/*@font-face { font-family: 'benderLight'; src: url('css/bender/bender_l.otf'); }
+@font-face { font-family: 'benderLightItalic'; src: url('css/bender/bender_li.otf'); }*/
+
+/*
+from google fonts:
+font-family: 'Press Start 2P', cursive;
+font-family: 'VT323', cursive;
+*/
+
+body { 
+    overflow: hidden;
+    background: #111111;
+    color:#00dd00;
+    text-shadow: 0px 0px 5px #008800;
+}
+
+p { 
+    font-family: 'VT323', cursive;
+    /* font-family: monospace; */
+    font-size: 20px;
+    line-height: 30px;
+    margin:0px;
+    padding:0px;
+    
+}
+
+#scrollingDisplay {
+    position:relative;
+}
+
+</style>
+
+</head>
+
+<body>
+<div id="scrollingDisplay"></div>
+<script type="text/javascript">
+
+// When we select a line, we're going to scroll through all these characters once before we fall on the right one.
+var alpha = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklnopqrstuvwxyz.-=*";
+
+
+/* First set of sentences will be aerospace related */
+var aerospace = [
+    ["GENERAL ATOMICS EMBEDDED SYSTEMS", 0],
+    ["SHIP LINUX VERSION 6.2.23", 0],
+    ["LEAD PROGRAMMER F.CONT589921", 0],
+    ["================================", 0],
+    ["     ", 0],
+    ["Booting engine control CPU ", 1],
+    ["Bringing nuclears online ", 0],
+    ["Calibrating engine bank [ A ]", 1],
+    ["Calibrating engine bank [ B ]", 1],
+    ["STARTING WEAPONS CONTROL", 0],
+    ["Calibrating engine bank [ C ]", 1],
+    ["Calibrating engine bank [ D ]", 1],
+    ["STARTING SEALING PROCEDURE", 0],
+    ["Sealing bulkheads 1-8 ", 1],
+    ["Sealing bulkheads 9-16 ", 1],
+    ["SEAL COMPLETE", 0],
+    ["ENGINES: BANK A", 0],
+    ["NUC RE ON ---- 001", 0],
+    ["NUC RE ON ---- 002", 0],
+    ["NUC RE ON ---- 003", 0],
+    ["NUC RE ON ---- 004", 0],
+    ["ENGINES: BANK A: PRIMING: ", 1],
+    ["ENGINES: BANK A: STARTING: ", 1],
+    ["ENGINES: BANK A: STARTED [ OK ]", 0],
+    [" ", 0],
+    ["ENGINES: BANK B", 0],
+    ["NUC RE ON ---- 005", 0],
+    ["NUC RE ON ---- 006", 0],
+    ["NUC RE ON ---- 007", 0],
+    ["NUC RE ON ---- 008", 0],
+    ["ENGINES: BANK B: PRIMING: ", 1],
+    ["ENGINES: BANK B: STARTING: ", 1],
+    ["ENGINES: BANK B: STARTED [ OK ]", 0],
+    ["+------------------------------------------------------+", 0],
+    ["CRYO TANK SIGNALS CHECK", 0],
+    ["+------------------------------------------------------+", 0],
+    ["PORT SIDE TANK 1A F.CONTRERAS .  .  .  .  .  .  .  .  [ NOMINAL ]", 0],
+    ["PORT SIDE TANK 1B A.CIANCI .  .  .  .  .  .  .  .  [ NOMINAL ]", 0],
+    ["STARBOARD SIDE TANK 1A B.KUCZEWSKI .  .  .  .  .  .  .  .  [ NOMINAL ]", 0],
+    ["STARBOARD SIDE TANK 1A T.VLATKO .  .  .  .  .  .  .  .  [ NOMINAL ]", 0],
+    ["HYPERSLEEP DIAGNOSTIC  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .", 0],
+    [".  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .", 0],
+    ["[ ALL NOMINAL ]", 0]
+]
+
+var killscreen = [
+    ["ERROR 404 ERROR 404 ERROR 404 ERROR 404 ERROR 404 ERROR 404 ERROR 404 +  +  +  + NO CARRIER WAVE. POOR / NO SIGNAL (200+ SnR).", 0],
+    ["=== 404 404 404 404 404 404 404 404 404 404 404 404 404 404 404 404 404 404 404 404 404 ===", 0],
+    ["NO CARRIER WAVE. POOR / NO SIGNAL (200+ SnR).", 0],
+    ["=== 404 404 404 404 404 404 404 404 404 404 404 404 404 404 404 404 404 404 404 404 404 ===", 0],
+    ["ATTEMPTING RECONNECT .   .   . POOR SIGNAL.", 0],
+    ["ATTEMPTING RECONNECT .   .   . CANNOT LOCATE SATELLITE", 0],
+    ["ATTEMPTING RECONNECT .   .   . ELECTROMAGNETIC REALIGNMENT SYSTEMS FAILURE: MOTOR ( MECH.ERR:87 )", 0],
+    ["ATTEMPTING RECONNECT .   .   . ELECTROMAGNETIC REALIGNMENT SYSTEMS FAILURE: POWERDSTRIB ( MECH.ERR:82 )", 0],
+    ["RECONNECTING .  .  .  .  . ", 1],
+    ["ERROR: ELECTROMAGNETIC REALIGNMENT SYSTEMS FAILURE: MOTOR (MECH.ERR:87)", 0],
+    ["ERROR: ELECTROMAGNETIC REALIGNMENT SYSTEMS FAILURE: POWERDSTRIB (MECH.ERR:82)", 0],
+    ["RECONNECT UNSUCCESSFUL. SIGNAL WEAK (200+ SnR) ... ", 0],
+    ["SWITCHING TO SAT-A (AUXILIAXY) DISH ARRAY FOR REALIGN ... ", 1],
+    ["SWITCHING TO SAT-B (AUXILIAXY) DISH ARRAY FOR REALIGN ... ", 1],
+    ["   827      ======================================DISH====", 0],
+    ["==========================     ==== DISH  =======xxx======", 0],
+    ["===== 8978 =  DD ============================== 66 =======", 0],
+    ["SWITCHING TO SAT-C (AUXILIAXY) DISH ARRAY FOR REALIGN ... ", 1],
+    ["   827      ======================================DISH====", 0],
+    ["SWITCHING TO SAT-D (AUXILIAXY) DISH ARRAY FOR REALIGN ... ", 1],
+    ["   827      ======================================NO DISH=", 0],
+    ["... 404 ... NOTHING FOUND. ALL SCANNERS BLANK. 827 ==NO DISH=", 0],
+	["001 ALL SCANNERS DARK. 826001 NO DISH?", 0],
+	["002 ALL SCANNERS DARK. 826002 NO DISH?", 0],
+	["003 ALL SCANNERS DARK. 826067 NO DISH?", 0],
+	["004 ALL SCANNERS DARK. 826354 NO DISH?", 0],
+	["005 ALL SCANNERS DARK. 826839 NO DISH?", 0],
+	["006 ALL SCANNERS DARK. 826948 NO DISH?", 0],
+    ["=== THIS IS FATAL ===", 0],
+    ["=== 404 404 404 404 404 404 404 404 404 404 404 404 404 404 404 404 404 404 404 404 404 404 404 404 404 404 404 404 404 ===", 0]
+]
+
+var selectedArray = killscreen;
+
+// console.log(selectedArray);
+
+var currentText = "";
+var newText = "";
+
+var currentLineIndex = 0;
+var currentCharIndex = 0;
+
+var currentLine = selectedArray[currentLineIndex][0];
+var hasLoadTime = selectedArray[currentLineIndex][1];
+
+var loadPercent = 0;
+var percentString = "";
+
+var intervalController = 0;
+var killscreenController = 0;
+
+function resetScreen(){
+    currentText = "";
+    newText = "";
+
+    currentLineIndex = 0;
+    currentCharIndex = 0;
+
+    currentLine = selectedArray[currentLineIndex][0];
+    hasLoadTime = selectedArray[currentLineIndex][1];
+
+    loadPercent = 0;
+    percentString = "";
+}
+
+function displayChar()
+{
+    if(currentCharIndex == 0)
+    {
+        if(selectedArray == killscreen){ currentText += "<p>// WEBSIMIANSYSTEMS 0.9.1>   "; }
+        if(selectedArray == aerospace){ currentText += "<p>// YOSHIGARU SHIP SYSTEMS 0.9.3>   "; } 
+    }
+    
+    // output text
+    currentText += currentLine.charAt(currentCharIndex);
+    document.getElementById("scrollingDisplay").innerHTML = currentText + " |>";
+    
+    // console.log("currentLineIndex: "+currentLineIndex);
+    // console.log("currentCharIndex: "+currentCharIndex);
+    // increment the character at the very end.
+    
+    try {
+        if(currentCharIndex < currentLine.length){ 
+            currentCharIndex++; 
+        } 
+        
+        else if(currentCharIndex == currentLine.length)
+        {
+            if(hasLoadTime == 1)
+            {
+                // console.log('OK We need load time.');
+                // console.log('loadPercent: '+loadPercent);
+                // If it has a load time, simulate a percentage load, then close the paragraph and go to the next line.
+                if(loadPercent < 100)
+                {
+                    if (loadPercent > 0)
+                    {
+                        percentString = "["+loadPercent+" %]";
+                        var c = currentText + percentString;
+                    }
+                    else if (loadPercent <= 100){
+                        percentString = "";
+                        loadPercent = 0;
+                    }
+                    loadPercent++;
+                    document.getElementById("scrollingDisplay").innerHTML = c;
+                }
+                else 
+                {
+                    // Add a line feed (with the end of the percent for this one)
+                    currentText += "[100 %] OK. </p>";
+                    // document.getElementById("scrollingDisplay").innerHTML = currentText;
+                    
+                    currentCharIndex = 0;
+                    currentLineIndex++;
+                    // console.log(currentLine);
+                    currentLine = selectedArray[currentLineIndex][0];
+                    hasLoadTime = selectedArray[currentLineIndex][1];
+                    percentString = "";
+                    loadPercent = 0;
+                }
+            }
+            else if (hasLoadTime == 0)
+            {
+                // Add a line feed
+                currentText += "</p>";
+                document.getElementById("scrollingDisplay").innerHTML = currentText;
+                currentCharIndex = 0;
+                currentLineIndex++;
+                //console.log(currentLine);
+                currentLine = selectedArray[currentLineIndex][0];
+                hasLoadTime = selectedArray[currentLineIndex][1];
+            }
+        }
+    } catch (e){
+        //console.log(e);
+        currentLineIndex = 0;
+        clearInterval(intervalController);
+        resetScreen();
+        startScroller();
+        return;
+    }
+}
+
+function effectsControl(){
+    
+    var shadowFlicker = Math.floor(Math.random() * 4) + 4;
+    shadowString = "0px 0px "+shadowFlicker+"px #00ff00";
+    $('body').css('text-shadow', shadowString);
+    
+    var dieroll = Math.floor(Math.random() * 20);
+    
+	if(dieroll > 6 || dieroll < 15){
+		var randomScaleX = String(Math.floor(Math.random()*10));
+		var randomScaleY = String(Math.floor(Math.random()*10));
+		var scaleString = 'scale('+randomScaleX+','+randomScaleY+')';
+		$('#scrollingDisplay').css('-webkit-transform', scaleString);
+	} else {
+		$('#scrollingDisplay').css('-webkit-transform', 'scale(1,1)');
+	}
+	
+    if(dieroll < 15){
+        $('#scrollingDisplay').css('-webkit-filter', 'blur(0px)');
+    }
+    
+    if(dieroll == 15 || dieroll == 16){
+        $('#scrollingDisplay').css('-webkit-filter', 'blur(4px)');
+        $('#scrollingDisplay').css('-webkit-transform', 'rotateX(45deg)');
+        $('#scrollingDisplay').css('-webkit-transform', 'skew(30deg, 20deg);');
+    } else {
+        $('#scrollingDisplay').css('-webkit-filter', 'blur(0px)');
+        $('#scrollingDisplay').css('-webkit-transform', 'rotateX(0deg)');
+        $('#scrollingDisplay').css('-webkit-transform', 'skew(0deg, 0deg)');
+    }
+    
+    if(dieroll == 17 || dieroll == 18){
+        var randomH_Shift = String(Math.floor(Math.random()*100))+'px';
+        var randomV_Shift = String(Math.floor(Math.random()*20))+'px';
+        $('#scrollingDisplay').css('top', randomV_Shift);
+        $('#scrollingDisplay').css('left', randomH_Shift);
+        $('#scrollingDisplay').css('-webkit-filter', 'blur(2px)');
+		
+		var randomScaleX = String(Math.floor(Math.random()*10));
+		var randomScaleY = String(Math.floor(Math.random()*10));
+		var scaleString = 'scale('+randomScaleX+','+randomScaleY+')';
+		$('#scrollingDisplay').css('-webkit-transform', scaleString);
+    } else {
+        $('#scrollingDisplay').css('top', '0px');
+        $('#scrollingDisplay').css('left', '0px');
+        $('#scrollingDisplay').css('-webkit-filter', 'blur(0px)');
+		$('#scrollingDisplay').css('-webkit-transform', 'scale(1,1)');
+		
+    }
+    
+    if(dieroll == 20){
+        $('#scrollingDisplay').css('-webkit-filter', 'blur(4px)');
+    } else {
+        $('#scrollingDisplay').css('-webkit-filter', 'blur(0px)');
+    }
+}
+
+function startScroller(){
+    intervalController = setInterval(displayChar, 60);
+    effectsController = setInterval(effectsControl, 30);
+};
+
+startScroller();
+
+</script>
+</body>
+</html>
