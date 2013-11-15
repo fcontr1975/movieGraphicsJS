@@ -1,0 +1,31 @@
+<html> 
+<head>
+  <script type="application/javascript">
+  
+function walkText(){
+    var ctx = canvas.getContext("2d");
+        ctx.strokeText("Believe", 5,20);
+        ctx.fillText("Believe",30,20);
+}  
+
+function init() {
+    var canvas = document.getElementById("canvas");
+    if (canvas.getContext) {
+        var ctx = canvas.getContext("2d");
+            // ctx.strokeText("Believe", 5,20);
+            ctx.font = "100px verdana";
+            ctx.fillText("No. 3", 300, 300);
+            ctx.fillText("No. 4", 300, 400);
+            ctx.fillText("No. 6", 300, 500);
+    }
+}
+</script>
+
+<title>Drawing Text on canvas</title>
+
+</head>
+
+<body onload="init();">
+<canvas id="canvas" width="1280" height="720"></canvas><br>
+</body>
+</html>
